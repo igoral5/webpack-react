@@ -13,8 +13,34 @@ declare module "*.module.sass" {
   export default classes;
 }
 
-declare module "*.scss";
+declare module "*.scss" {
+  const content: any;
+  export default content;
+}
 
-declare module "*.css";
+declare module "*.css" {
+  const content: any;
+  export default content;
+}
 
-declare module "*.jpg";
+declare module "*.svg" {
+  import React = require("react");
+
+  export const ReactComponent: React.FunctionComponent<
+    React.SVGProps<SVGSVGElement>
+  >;
+  const src: string;
+  export default src;
+}
+declare module "*.png" {
+  const content: any;
+  export default content;
+}
+declare module "*.jpg" {
+  const content: any;
+  export default content;
+}
+declare module "*.json" {
+  const content: any;
+  export default content;
+}
