@@ -1,5 +1,6 @@
 const path = require("path");
 // Импортируем пакет path
+const HTMLWebpackPlugins = require("html-webpack-plugin");
 
 module.exports = {
   entry: path.resolve(__dirname, "./src/index.ts"),
@@ -24,6 +25,11 @@ module.exports = {
   resolve: {
     extensions: [".js", ".jsx", ".tsx", ".ts", ".json"],
   },
+  plugins: [
+    new HTMLWebpackPlugins({
+      template: path.resolve(__dirname, "public/index.html"),
+    }),
+  ],
 
   devServer: {
     static: path.resolve(__dirname, "./dist"), // путь, куда "смотрит" режим разработчика
