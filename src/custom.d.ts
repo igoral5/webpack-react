@@ -16,3 +16,5 @@ declare module "*.module.sass" {
 declare module "*.scss";
 
 declare module "*.css";
+
+declare module "*.jpg";
