@@ -1,14 +1,20 @@
 const path = require("path");
+const webpack = require("webpack");
 // Импортируем пакет path
 const HTMLWebpackPlugins = require("html-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 
+const production = process.env.NODE_ENV === "production";
+
 module.exports = {
-  entry: path.resolve(__dirname, "./src/index.ts"),
+  entry: path.resolve(__dirname, "..", "./src/index.ts"),
   output: {
-    path: path.resolve(__dirname, "./dist"),
-    filename: "main.js",
+    path: path.resolve(__dirname, "..", "./dist"),
+    filename: production
+      ? "static/scripts/[name].[contenthash].js" // добавляем хеш к имени файла, если запускаем в режиме production
+      : "static/scripts/[name].js",
     clean: true,
+    publicPath: "/",
   },
   module: {
     rules: [
@@ -24,18 +30,18 @@ module.exports = {
       {
         test: /\.(sa|sc|c)ss$/,
         use: [
-          MiniCssExtractPlugin.loader,
-          //"style-loader",
+          //в режиме production создаём физический файл в папке dist, в dev режиме добавляем стили в тег style в html-файле
+          production ? MiniCssExtractPlugin.loader : "style-loader",
           {
             loader: "css-loader",
             options: {
               modules: {
                 mode: "local",
                 localIdentName: "[name]__[local]__[hash:base64:5]",
-                auto: /\.module\.\w+$/i,
                 namedExport: false,
+                auto: /\.module\.\w+$/i,
               },
-              importLoaders: 2, //Значение 2 говорит о том, что некоторые трансформации PostCSS нужно применить до css-loader.
+              importLoaders: 2,
             },
           },
           "postcss-loader",
@@ -73,20 +79,16 @@ module.exports = {
   },
   plugins: [
     new HTMLWebpackPlugins({
-      template: path.resolve(__dirname, "public/index.html"),
+      template: path.resolve(__dirname, "..", "public/index.html"),
     }),
     new MiniCssExtractPlugin({
-      filename: "static/styles/index.css",
+      filename: "static/styles/[name].[contenthash].css",
+    }),
+    //Плагин позволяет установить переменные окружения, можно переопределить переменную из блока script файла package.json
+    new webpack.EnvironmentPlugin({
+      NODE_ENV: "development", // значение по умолчанию 'development', если переменная process.env.NODE_ENV не передана при вызове сборки
     }),
   ],
-
-  devServer: {
-    static: path.resolve(__dirname, "./dist"), // путь, куда "смотрит" режим разработчика
-    compress: true, // это ускорит загрузку в режиме разработки
-    port: 8080, // порт, чтобы открывать сайт по адресу localhost:8080, но можно поменять порт
-    open: true, // сайт будет открываться сам при запуске npm run dev
-    hot: true,
-  },
 };
 
 //module.exports — это синтаксис экспорта в Node.js
