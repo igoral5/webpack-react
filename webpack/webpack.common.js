@@ -14,7 +14,6 @@ module.exports = {
       ? "static/scripts/[name].[contenthash].js" // добавляем хеш к имени файла, если запускаем в режиме production
       : "static/scripts/[name].js",
     clean: true,
-    publicPath: "/",
   },
   module: {
     rules: [
